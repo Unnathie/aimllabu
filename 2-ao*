@@ -1,70 +1,66 @@
-print('AO* algo')  # Prints "AO* algo" as a header
+print('AO* algo')  
 
-# Cost to find the AND and OR path
 def Cost(H, condition, weight=1):
-    cost = {}  # Create an empty dictionary to store costs
-    if 'AND' in condition:  # Check if there is an 'AND' condition
-        AND_nodes = condition['AND']  # Get the nodes for the 'AND' condition
-        Path_A = ' AND '.join(AND_nodes)  # Create a string representing the 'AND' path
-        PathA = sum(H[node] + weight for node in AND_nodes)  # Calculate the cost for the 'AND' path
-        cost[Path_A] = PathA  # Store the cost in the dictionary using the 'AND' path as the key
+    cost = {}  
+    if 'AND' in condition:  
+        AND_nodes = condition['AND']  
+        Path_A = ' AND '.join(AND_nodes)  
+        PathA = sum(H[node] + weight for node in AND_nodes)  
+        cost[Path_A] = PathA  
 
-    if 'OR' in condition:  # Check if there is an 'OR' condition
-        OR_nodes = condition['OR']  # Get the nodes for the 'OR' condition
-        Path_B = ' OR '.join(OR_nodes)  # Create a string representing the 'OR' path
-        PathB = min(H[node] + weight for node in OR_nodes)  # Calculate the cost for the 'OR' path
-        cost[Path_B] = PathB  # Store the cost in the dictionary using the 'OR' path as the key
+    if 'OR' in condition:  
+        OR_nodes = condition['OR']  
+        Path_B = ' OR '.join(OR_nodes) 
+        PathB = min(H[node] + weight for node in OR_nodes)  
+        cost[Path_B] = PathB  
 
-    return cost  # Return the dictionary of costs
+    return cost 
 
-# Update the cost
+
 def update_cost(H, Conditions, weight=1):
-    Main_nodes = list(Conditions.keys())  # Get the main nodes from the conditions dictionary
-    Main_nodes.reverse()  # Reverse the order of main nodes
-    least_cost = {}  # Create an empty dictionary to store the least costs
-    for key in Main_nodes:  # Iterate over the main nodes
-        condition = Conditions[key]  # Get the condition for the current main node
-        print(key, ':', Conditions[key], '>>>', Cost(H, condition, weight))  # Print the current main node and its condition, and calculate the cost
-        c = Cost(H, condition, weight)  # Calculate the cost for the current condition
-        H[key] = min(c.values())  # Update the cost of the current main node with the minimum cost from the condition
-        least_cost[key] = Cost(H, condition, weight)  # Store the cost for the current main node in the least_cost dictionary
-    return least_cost  # Return the dictionary of least costs
+    Main_nodes = list(Conditions.keys())  
+    Main_nodes.reverse()  
+    least_cost = {}  
+    for key in Main_nodes:  
+        condition = Conditions[key]  
+        print(key, ':', Conditions[key], '>>>', Cost(H, condition, weight))  
+        c = Cost(H, condition, weight)  
+        H[key] = min(c.values())  
+        least_cost[key] = Cost(H, condition, weight) 
+    return least_cost 
 
-# Print the shortest path
+
 def shortest_path(Start, Updated_cost, H):
-    Path = Start  # Set the initial path as the starting node
-    if Start in Updated_cost.keys():  # Check if the starting node has updated costs
-        Min_cost = min(Updated_cost[Start].values())  # Get the minimum cost from the updated costs dictionary
-        key = list(Updated_cost[Start].keys())  # Get the keys (paths) from the updated costs dictionary
-        values = list(Updated_cost[Start].values())  # Get the values (costs) from the updated costs dictionary
-        Index = values.index(Min_cost)  # Get the index of the minimum cost
+    Path = Start  
+    if Start in Updated_cost.keys(): 
+        Min_cost = min(Updated_cost[Start].values()) 
+        key = list(Updated_cost[Start].keys()) 
+        values = list(Updated_cost[Start].values())  
+        Index = values.index(Min_cost) 
 
-        # FIND MINIMUM PATH KEY
-        Next = key[Index].split()  # Split the key into individual node names
-        # ADD TO PATH FOR OR PATH
-        if len(Next) == 1:  # Check if the length of Next is 1, indicating an 'OR' path
-            Start = Next[0]  # Get the next node for the 'OR' path
-            Path += '<--' + shortest_path(Start, Updated_cost, H)  # Recursively call shortest_path with the next node and add it to the path
-        # ADD TO PATH FOR AND PATH
-        else:  # If the length of Next is not 1, it indicates an 'AND' path
-            Path += '<--(' + key[Index] + ') '  # Add the 'AND' path to the path string
-            Start = Next[0]  # Get the first node of the 'AND' path
-            Path += '[' + shortest_path(Start, Updated_cost, H) + ' + '  # Recursively call shortest_path with the first node and add it to the path
-            Start = Next[-1]  # Get the last node of the 'AND' path
-            Path += shortest_path(Start, Updated_cost, H) + ']'  # Recursively call shortest_path with the last node and add it to the path
+        Next = key[Index].split() 
+        if len(Next) == 1:  
+            Start = Next[0]  
+            Path += '<--' + shortest_path(Start, Updated_cost, H)  
+        else: 
+            Path += '<--(' + key[Index] + ') '  
+            Start = Next[0] 
+            Path += '[' + shortest_path(Start, Updated_cost, H) + ' + '
+            Start = Next[-1] 
+            Path += shortest_path(Start, Updated_cost, H) + ']'  
 
-    return Path  # Return the final path
+    return Path  
 
 H = {'A': -1, 'B': 5, 'C': 2, 'D': 4, 'E': 7, 'F':9, 'G': 3, 'H': 0, 'I': 0, 'J': 0}  # Initial costs for each node
 
 Conditions = {
-    'A': {'OR': ['B'], 'AND': ['C', 'D']},  # Conditions for node A
-    'B': {'OR': ['E', 'F']},  # Conditions for node B
-    'C': {'OR': ['G'], 'AND': ['H', 'I']},  # Conditions for node C
-    'D': {'OR': ['J']}  # Conditions for node D
+    'A': {'OR': ['B'], 'AND': ['C', 'D']},  
+    'B': {'OR': ['E', 'F']},  
+    'C': {'OR': ['G'], 'AND': ['H', 'I']},  
+    'D': {'OR': ['J']}  
 }
 
-weight = 1  # Weight for calculating costs
+weight = 1 
 
 print('Updated Cost:')  # Prints "Updated Cost:" as a header
 Updated_cost = update_cost(H, Conditions, weight=1)  # Update the costs based on the conditions
