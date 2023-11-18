@@ -1,35 +1,35 @@
-import csv  # Import the csv module
+import csv
 
-with open("candidate.csv") as f:  # Open the "candidate.csv" file
-    csv_file = csv.reader(f)  # Read the file using the csv.reader
-    data = list(csv_file)  # Convert the contents of the file into a list
+with open("trainingexamples.csv") as f:
+    csv_file = csv.reader(f)
+    data = list(csv_file)
 
-    specific = data[1][:-1]  # Get the specific hypothesis from the second row of the data list, excluding the last element
-    general = [['?' for i in range(len(specific))] for j in range(len(specific))]  # Create a general hypothesis list filled with '?' values
+    specific = data[1][:-1]
+    general = [['?' for i in range(len(specific))] for j in range(len(specific))]
 
-    for i in data:  # Iterate over each row in the data list
-        if i[-1] == "Yes":  # Check if the last element of the row is "Yes"
-            for j in range(len(specific)):  # Iterate over the elements in the specific hypothesis
-                if i[j] != specific[j]:  # Check if the element doesn't match the specific hypothesis
-                    specific[j] = "?"  # Update the specific hypothesis with "?"
-                    general[j][j] = "?"  # Update the corresponding element in the general hypothesis with "?"
-        elif i[-1] == "No":  # Check if the last element of the row is "No"
-            for j in range(len(specific)):  # Iterate over the elements in the specific hypothesis
-                if i[j] != specific[j]:  # Check if the element doesn't match the specific hypothesis
-                    general[j][j] = specific[j]  # Update the corresponding element in the general hypothesis with the specific hypothesis element
+    for i in data:
+        if i[-1] == "Yes":
+            for j in range(len(specific)):
+                if i[j] != specific[j]:
+                    specific[j] = "?"
+                    general[j][j] = "?"
+
+        elif i[-1] == "No":
+            for j in range(len(specific)):
+                if i[j] != specific[j]:
+                    general[j][j] = specific[j]
                 else:
-                    general[j][j] = "?"  # Update the corresponding element in the general hypothesis with "?"
+                    general[j][j] = "?"
 
-        print("\nStep " + str(data.index(i) + 1) + " of Candidate Elimination Algorithm")  # Print the step number of the algorithm
-        print(specific)  # Print the updated specific hypothesis
-        print(general)  # Print the updated general hypothesis
+        print("\nStep " + str(data.index(i)+1) + " of Candidate Elimination Algorithm")
+        print(specific)
+        print(general)
 
-    gh = []  # gh = general Hypothesis
-    for i in general:  # Iterate over the elements in the general hypothesis
-        for j in i:  # Iterate over the elements in each sublist of the general hypothesis
-            if j != '?':  # Check if the element is not "?"
-                gh.append(i)  # Append the sublist to the general hypothesis list
+    gh = [] # gh = general Hypothesis
+    for i in general:
+        for j in i:
+            if j != '?':
+                gh.append(i)
                 break
-
-    print("\nFinal Specific hypothesis:\n", specific)  # Print the final specific hypothesis
-    print("\nFinal General hypothesis:\n", gh)  # Print the final general hypothesis
+    print("\nFinal Specific hypothesis:\n", specific)
+    print("\nFinal General hypothesis:\n", gh)
